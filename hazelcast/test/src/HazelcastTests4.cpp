@@ -3221,8 +3221,12 @@ namespace hazelcast {
                     LoadListener loadListener(latch1);
                     std::string listenerId = storeEnabledMap->addEntryListener(loadListener, false);
                     storeEnabledMap->put("key1", "value1");
+                    ASSERT_EQ(1, storeEnabledMap->size());
                     storeEnabledMap->evictAll();
+                    ASSERT_EQ(0, storeEnabledMap->size());
                     storeEnabledMap->get("key1");
+                    ASSERT_EQ(1, storeEnabledMap->size());
+                    ASSERT_EQ("value1", *(storeEnabledMap->get("key1")));
                     ASSERT_OPEN_EVENTUALLY(latch1);
                     storeEnabledMap->removeEntryListener(listenerId);
                 }
