@@ -122,7 +122,7 @@ namespace hazelcast {
                 #ifdef HZ_BIG_ENDIAN
                     swap_2(source, target);
                 #else
-                    *(static_cast<uint16_t *>(target)) = *(static_cast<const uint16_t *>(source));
+                    memcpy(target, source, sizeof(uint16_t));
                 #endif
             }
 
@@ -134,7 +134,7 @@ namespace hazelcast {
                 #ifdef HZ_BIG_ENDIAN
                     swap_4(source, target);
                 #else
-                    *(static_cast<uint32_t *>(target)) = *(static_cast<const uint32_t *>(source));
+                    memcpy(target, source, sizeof(uint32_t));
                 #endif
             }
 
@@ -146,7 +146,7 @@ namespace hazelcast {
                 #ifdef HZ_BIG_ENDIAN
                     swap_8(source, target);
                 #else
-                *(static_cast<uint64_t *>(target)) = *(static_cast<const uint64_t *>(source));
+                    memcpy(target, source, sizeof(uint64_t));
                 #endif
             }
 
@@ -168,7 +168,7 @@ namespace hazelcast {
             #ifdef HZ_BIG_ENDIAN
                    swap_2(source, target);
             #else
-                *(static_cast<uint16_t *>(target)) = *(static_cast<const uint16_t *>(source));
+               memcpy(target, source, sizeof(uint16_t));
             #endif
             }
 
@@ -180,7 +180,7 @@ namespace hazelcast {
                 #ifdef HZ_BIG_ENDIAN
                     swap_4(source, target);
                 #else
-                    *(static_cast<uint32_t *>(target)) = *(static_cast<const uint32_t *>(source));
+                    memcpy(target, source, sizeof(uint32_t));
                 #endif
             }
 
@@ -192,7 +192,7 @@ namespace hazelcast {
             #ifdef HZ_BIG_ENDIAN
                    swap_8(source, target);
             #else
-                *(static_cast<uint64_t *>(target)) = *(static_cast<const uint64_t *>(source));
+               memcpy(target, source, sizeof(uint64_t));
             #endif
             }
 
@@ -213,7 +213,7 @@ namespace hazelcast {
             */
             inline static void bigEndianToNative2(const void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                   *(static_cast<uint16_t *>(target)) = *(static_cast<const uint16_t *>(source));
+              memcpy(target, source, sizeof(uint16_t));
             #else
                 swap_2(source, target);
             #endif
@@ -225,7 +225,7 @@ namespace hazelcast {
             */
             inline static void bigEndianToNative4(const void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                *(static_cast<uint32_t *>(target)) = *(static_cast<const uint32_t *>(source));
+                memcpy(target, source, sizeof(uint32_t));
             #else
                 swap_4(source, target);
             #endif
@@ -237,7 +237,7 @@ namespace hazelcast {
             */
             inline static void bigEndianToNative8(const void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                *(static_cast<uint64_t *>(target)) = *(static_cast<const uint64_t *>(source));
+                memcpy(target, source, sizeof(uint64_t));
             #else
                 swap_8(source, target);
             #endif
@@ -249,7 +249,7 @@ namespace hazelcast {
             */
             inline static void nativeToBigEndian2(void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                *(static_cast<uint16_t *>(target)) = *(static_cast<const uint16_t *>(source));
+                memcpy(target, source, sizeof(uint16_t));
             #else
                 swap_2(source, target);
 
@@ -262,7 +262,7 @@ namespace hazelcast {
             */
             inline static void nativeToBigEndian4(const void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                *(static_cast<uint32_t *>(target)) = *(static_cast<const uint32_t *>(source));
+                memcpy(target, source, sizeof(uint32_t));
             #else
                 swap_4(source, target);
             #endif
@@ -274,7 +274,7 @@ namespace hazelcast {
             */
             inline static void nativeToBigEndian8(void *source, void *target) {
             #ifdef HZ_BIG_ENDIAN
-                *(static_cast<uint64_t *>(target)) = *(static_cast<const uint64_t *>(source));
+                memcpy(target, source, sizeof(uint64_t));
             #else
                 swap_8(source, target);
             #endif
@@ -284,8 +284,10 @@ namespace hazelcast {
 
         private :
             inline static void swap_2(const void *orig, void* target) {
-                *reinterpret_cast<uint16_t *> (target) =
-                        bswap16 (*reinterpret_cast<uint16_t const *> (orig));
+                uint16_t raw;
+                memcpy(&raw, orig, sizeof(uint16_t));
+                uint16_t swapped = bswap16(raw);
+                memcpy(target, &swapped, sizeof(uint16_t));
             }
 
             inline static void swapInplace4(void *orig) {
@@ -295,14 +297,18 @@ namespace hazelcast {
 
             inline static void swap_4 (const void* orig, void* target)
             {
-                *reinterpret_cast<uint32_t *> (target) =
-                        bswap32 (*reinterpret_cast<uint32_t const *> (orig));
+                uint32_t raw;
+                memcpy(&raw, orig, sizeof(uint32_t));
+                uint32_t swapped = bswap32(raw);
+                memcpy(target, &swapped, sizeof(uint32_t));
             }
 
             inline static void swap_8 (const void* orig, void* target)
             {
-                *reinterpret_cast<uint64_t *> (target) =
-                        bswap64 (*reinterpret_cast<uint64_t const *> (orig));
+                uint64_t raw;
+                memcpy(&raw, orig, sizeof(uint64_t));
+                uint64_t swapped = bswap64(raw);
+                memcpy(target, &swapped, sizeof(uint64_t));
             }
         };
     }
