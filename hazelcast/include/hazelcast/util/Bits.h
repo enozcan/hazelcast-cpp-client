@@ -198,7 +198,9 @@ namespace hazelcast {
 
             inline static int32_t readIntB(std::vector<byte> &buffer, unsigned long pos) {
                 #ifdef HZ_BIG_ENDIAN
-                    return *((int32_t *) (&buffer[0] + pos));
+                    int32_t result;
+                    memcpy(&result, (&buffer[0] + pos), sizeof(int32_t));
+                    return result;
                 #else
                     int32_t result;
                     swap_4(&(buffer[0]) + pos, &result);
@@ -291,7 +293,8 @@ namespace hazelcast {
             }
 
             inline static void swapInplace4(void *orig) {
-                uint32_t value = * reinterpret_cast<const uint32_t*> (orig);
+                uint32_t value;
+                memcpy(&value, orig, sizeof(uint32_t));
                 swap_4(&value, orig);
             }
 
